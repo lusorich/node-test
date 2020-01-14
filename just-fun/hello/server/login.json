@@ -1,0 +1,16 @@
+{
+  "login": [
+    {
+      "email": "fds@mail.ru",
+      "password": "123"
+    },
+    {
+      "email": "ds@mail.ru",
+      "password": "123"
+    },
+    {
+      "email": "kj@mail.ru",
+      "password": "666"
+    }
+  ]
+}

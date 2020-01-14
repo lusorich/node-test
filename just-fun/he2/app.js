@@ -1,14 +1,7 @@
 const express = require('express');
 const bodyparser = require('body-parser');
-const path = require('path');
 const expressHbs = require('express-handlebars');
 const fileUpload = require('express-fileupload');
-
-const adminRoutes = require('./routes/admin');
-const loginRoutes = require('./routes/login');
-const mainRoutes = require('./routes/main');
-
-const rootDir = require('./util/path');
 
 const app = express();
 
@@ -18,10 +11,18 @@ app.set('views', 'views');
 
 app.use(fileUpload());
 app.use(bodyparser.urlencoded({ extended: false }));
-app.use(express.static(path.join(rootDir, 'public')));
 
-app.use('/admin', adminRoutes);
-app.use('/login', loginRoutes);
-app.use('/', mainRoutes);
+app.get('/admin', (req, res, next) => {
+    console.log(req.files);
+    res.status(200).render('admin', {
+        pageTitle: 'Admin',
+        path: '/admin',
+        layout: false
+      });
+});
+
+app.post('/admin/upload', (req, res, next) => {
+    console.log(req.files);
+})
 
 app.listen(3030);
