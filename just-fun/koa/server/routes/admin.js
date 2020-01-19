@@ -2,46 +2,45 @@ const express = require('express');
 const router = express.Router();
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
-const adapter = new FileSync('admin.json');
+
+const adapter = new FileSync('main.json');
 const db = low(adapter);
 
-db.defaults({ desc: [], skills: [] }).write();
+db.defaults({ products: [], skills: {} }).write();
 
 router.get('/', (request, response, next) => {
   response.status(200).render('admin', {
     pageTitle: 'Admin',
     path: '/admin',
-    layout: false
+    layout: false,
+    skillStatus: request.flash('skillStatus'),
+    uploadStatus: request.flash('uploadStatus')
   });
 });
 
 router.post('/skills', (request, response, next) => {
-  let reqToJson = JSON.stringify(request.body);
-
   db.get('skills')
-    .push({
-      age: JSON.parse(reqToJson).age,
-      concerts: JSON.parse(reqToJson).concerts,
-      cities: JSON.parse(reqToJson).cities,
-      years: JSON.parse(reqToJson).years
-    })
+    .set('age', request.body.age)
+    .set('concerts', request.body.concerts)
+    .set('cities', request.body.cities)
+    .set('years', request.body.years)
     .write();
-  response.end();
+  request.flash('skillStatus', 'Скиллы добавлены успешно');
+  response.redirect('/admin');
 });
 
 router.post('/upload', (request, response, next) => {
-
-  console.log(request.files);
-  
-  let reqToJson = JSON.stringify(request.body);
-
-  db.get('desc')
+  let pathName = request.file.path.split('public');
+  pathName.shift().toString();
+  db.get('products')
     .push({
-      name: JSON.parse(reqToJson).name,
-      price: JSON.parse(reqToJson).price
+      photo: pathName,
+      name: request.body.name,
+      price: request.body.price
     })
     .write();
-  response.end();
+  request.flash('uploadStatus', 'Файл загружен');
+  response.redirect('/admin');
 });
 
 module.exports = router;

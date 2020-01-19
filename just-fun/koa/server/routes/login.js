@@ -12,19 +12,20 @@ router.get('/', (request, response, next) => {
   response.status(200).render('login', {
     pageTitle: 'Login',
     path: '/login',
-    layout: false
+    layout: false,
+    loginStatus: request.flash('loginStatus')
   });
 });
 
 router.post('/', (request, response, next) => {
-  let reqToJson = JSON.stringify(request.body);
   db.get('login')
     .push({
-      email: JSON.parse(reqToJson).email,
-      password: JSON.parse(reqToJson).password
+      email: request.body.email,
+      password: request.body.password
     })
     .write();
-  response.end();
+  request.flash('loginStatus', 'Данные для входа добавлены');
+  response.redirect('/login');
 });
 
 module.exports = router;
