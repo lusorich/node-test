@@ -1,15 +1,16 @@
-const express = require('express');
+const Koa = require('koa');
 const bodyparser = require('body-parser');
 const path = require('path');
-const expressHbs = require('express-handlebars');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
+const koaHbs = require('koa-hbs');
+const koaStatic = require('koa-static');
+const session = require('koa-session');
+
 
 const adminRoutes = require('./routes/admin');
 const loginRoutes = require('./routes/login');
 const mainRoutes = require('./routes/main');
 
-const multer = require('multer');
+const multer = require('@koa/multer');
 const upload = multer({ dest: 'public/assets/img/products' });
 
 const storageConfig = multer.diskStorage({
@@ -25,28 +26,26 @@ const flash = require('connect-flash');
 
 const rootDir = require('./util/path');
 
-const app = express();
+const app = new Koa();
 
-app.engine('hbs', expressHbs({ defaultLayout: 'main-layout', extname: 'hbs' }));
-app.set('view engine', 'hbs');
-app.set('views', 'views');
-
-app.use(flash());
-app.use(cookieParser());
 app.use(
-  session({
-    secret: 'secret',
-    saveUninitialized: true,
-    resave: true,
-    cookie: { maxAge: 3600 * 24 }
+  koaHbs.middleware({
+    viewPath: __dirname + '/views'
   })
 );
+
+app.use(flash());
 app.use(bodyparser.urlencoded({ extended: false }));
-app.use(express.static(path.join(rootDir, 'public')));
+app.use(koaStatic('./public'));
 app.use(multer({ storage: storageConfig }).single('photo'));
 
-app.use('/admin', adminRoutes);
-app.use('/login', loginRoutes);
-app.use('/', mainRoutes);
+app
+  .use(adminRoutes.routes())
+  //.use(loginRoutes.routes())
+  //.use(mainRoutes.routes())
+  .use(adminRoutes.allowedMethods());
+//app.use('/admin', adminRoutes);
+//app.use('/login', loginRoutes);
+//app.use('/', mainRoutes);
 
 app.listen(3030);

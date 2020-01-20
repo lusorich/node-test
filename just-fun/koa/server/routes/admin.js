@@ -1,5 +1,6 @@
-const express = require('express');
-const router = express.Router();
+const Router = require('koa-router');
+const router = new Router();
+const koaBody = require('koa-body');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 
@@ -8,13 +9,13 @@ const db = low(adapter);
 
 db.defaults({ products: [], skills: {} }).write();
 
-router.get('/', (request, response, next) => {
-  response.status(200).render('admin', {
+router.get('/', ctx => {
+  ctx.status(200).render('admin', {
     pageTitle: 'Admin',
     path: '/admin',
     layout: false,
-    skillStatus: request.flash('skillStatus'),
-    uploadStatus: request.flash('uploadStatus')
+    skillStatus: ctx.request.flash('skillStatus'),
+    uploadStatus: ctx.request.flash('uploadStatus')
   });
 });
 
