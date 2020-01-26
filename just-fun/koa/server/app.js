@@ -1,51 +1,28 @@
 const Koa = require('koa');
-const bodyparser = require('body-parser');
-const path = require('path');
-const koaHbs = require('koa-hbs');
 const koaStatic = require('koa-static');
+const router = require('./routes');
+const flash = require('koa-connect-flash');
+const path = require('path');
 const session = require('koa-session');
-
-
-const adminRoutes = require('./routes/admin');
-const loginRoutes = require('./routes/login');
-const mainRoutes = require('./routes/main');
-
-const multer = require('@koa/multer');
-const upload = multer({ dest: 'public/assets/img/products' });
-
-const storageConfig = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join('public', 'assets', 'img'));
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  }
-});
-
-const flash = require('connect-flash');
-
-const rootDir = require('./util/path');
+const config = require('./config');
+const Pug = require('koa-pug');
 
 const app = new Koa();
 
-app.use(
-  koaHbs.middleware({
-    viewPath: __dirname + '/views'
-  })
-);
+const pug = new Pug({
+  viewPath: './views',
+  pretty: false,
+  basedir: './views',
+  noCache: true,
+  app: app
+});
 
-app.use(flash());
-app.use(bodyparser.urlencoded({ extended: false }));
 app.use(koaStatic('./public'));
-app.use(multer({ storage: storageConfig }).single('photo'));
+app.use(flash());
 
 app
-  .use(adminRoutes.routes())
-  //.use(loginRoutes.routes())
-  //.use(mainRoutes.routes())
-  .use(adminRoutes.allowedMethods());
-//app.use('/admin', adminRoutes);
-//app.use('/login', loginRoutes);
-//app.use('/', mainRoutes);
+  .use(session(config.session, app))
+  .use(router.routes())
+  .use(router.allowedMethods());
 
 app.listen(3030);
