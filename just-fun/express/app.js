@@ -11,13 +11,13 @@ const rootDir = require("./util/path");
 const app = express();
 
 app.set("view engine", "pug");
-app.set("vie  ws", "views");
+app.set("views", "views");
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootDir, "public")));
 
+app.use("/", shopRoutes);
 app.use("/admin", adminData.router);
-app.use("/shop", shopRoutes);
 app.use(page404);
 
 app.listen(3030);
