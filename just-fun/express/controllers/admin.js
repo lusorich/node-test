@@ -15,3 +15,13 @@ exports.postAddProduct = (request, response, next) => {
   product.save();
   response.redirect("/");
 };
+
+exports.getProducts = (reqest, response, next) => {
+  Product.fetchAll(products => {
+    response.status(200).render("admin/products", {
+      prods: products,
+      pageTitle: "admin products",
+      path: "/admin/products"
+    });
+  });
+};
