@@ -1,1 +1,22 @@
 extend ../layouts/main-layout.pug
+
+block styles
+    link(rel="stylesheet" href="/css/product.css")
+block content
+    main
+        h1 My Products
+        p List of all the products
+        .grid
+            each product in prods
+                article.card.product-item
+                    header.card__header
+                        h1.product__title #{product.title}
+                    div.card__image
+                        img(src="#{product.imageUrl}" alt="#{product.title}")
+                    div.card__content
+                        h2.product__price #{product.price}
+                        p.product__description #{product.description}
+                    div.card__actions
+                        form(action="/admin/delete-product" method="POST")
+                          button.btn Delete
+                        a.btn(href="/admin/edit-product") Edit
