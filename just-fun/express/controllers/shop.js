@@ -14,6 +14,21 @@ exports.getProducts = (request, response, next) => {
   });
 };
 
+exports.getProduct = (request, response, next) => {
+  const prodId = request.params.productId;
+  Product.findById(prodId, product => {
+    response.status(200).render("shop/product-item", {
+      product: product,
+      pageTitle: "Product",
+      path: "/products",
+      formsCSS: true,
+      activeAddProduct: true,
+      productCSS: true,
+    });
+  })
+};
+
+
 exports.getIndex = (request, response, next) => {
   Product.fetchAll(products => {
     response.status(200).render("shop/index", {
