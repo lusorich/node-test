@@ -11,6 +11,7 @@ exports.getAddProduct = (request, response, next) => {
   response.status(200).render("admin/edit-product", {
     pageTitle: "Add product",
     path: "/admin/add-product",
+    editing: false
   });
 };
 
@@ -19,10 +20,17 @@ exports.getEditProduct = (request, response, next) => {
   if (!editMode) {
     return response.redirect("/");
   }
-  response.status(200).render("admin/edit-product", {
-    pageTitle: "Edit product",
-    path: "/admin/edit-product",
-    editing: editMode
+  const prodId = request.params.productId;
+  Product.findById(prodId, product => {
+    if (!product) {
+      return response.redirect("/");
+    }
+    response.status(200).render("admin/edit-product", {
+      pageTitle: "Edit product",
+      path: "/admin/edit-product",
+      editing: editMode,
+      product: product
+    });
   });
 };
 
