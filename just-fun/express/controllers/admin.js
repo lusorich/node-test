@@ -1,8 +1,8 @@
 const Product = require("../models/product");
 
 exports.postAddProduct = (request, response, next) => {
-  const { title, imageUrl, price, description } = request.body; 
-  const product = new Product(title, imageUrl, price, description);
+  const {title, imageUrl, price, description } = request.body; 
+  const product = new Product(null, title, imageUrl, price, description);
   product.save();
   response.redirect("/");
 };
@@ -33,6 +33,23 @@ exports.getEditProduct = (request, response, next) => {
     });
   });
 };
+
+exports.postEditProduct = (request, response, next) => {
+  const prodId = request.body.productId;
+  const updatedTitle = request.body.title;
+  const updatedPrice = request.body.price;
+  const updatedImageUrl = request.body.imageUrl;
+  const updatedDesc = request.body.description;
+  const updatedProduct = new Product(prodId, updatedTitle, updatedPrice, updatedImageUrl, updatedDesc);
+  updatedProduct.save();
+  response.redirect("/admin/products");
+}
+
+exports.postDeleteProduct = (request, response, next) => {
+  const {productId, title, imageUrl, price, description } = request.body; 
+  const product = new Product(productId, title, imageUrl, price, description);
+  product.delete();
+}
 
 exports.getProducts = (reqest, response, next) => {
   Product.fetchAll(products => {

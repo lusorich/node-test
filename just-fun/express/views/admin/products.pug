@@ -18,5 +18,6 @@ block content
                         p.product__description #{product.description}
                     div.card__actions
                         form(action="/admin/delete-product" method="POST")
+                          input(type="hidden" value=product.id name="productId")
                           button.btn Delete
-                        a.btn(href="/admin/edit-product") Edit
+                        a.btn(href=`/admin/edit-product/${product.id}?edit=true`) Edit
