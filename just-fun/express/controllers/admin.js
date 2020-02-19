@@ -46,9 +46,9 @@ exports.postEditProduct = (request, response, next) => {
 }
 
 exports.postDeleteProduct = (request, response, next) => {
-  const {productId, title, imageUrl, price, description } = request.body; 
-  const product = new Product(productId, title, imageUrl, price, description);
-  product.delete();
+  const { productId } = request.body; 
+  Product.delete(productId);
+  response.redirect("/admin/products");
 }
 
 exports.getProducts = (reqest, response, next) => {

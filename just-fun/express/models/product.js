@@ -44,12 +44,11 @@ module.exports = class Product {
     });
   }
 
-  delete() {
+  static delete(id) {
     getProductsFromFile(products => {
-      if (this.id) {
-        const existingProductIndex = products.findIndex(prod => prod.id === this.id);
-        const updatedProducts = [...products];
-        updatedProducts.splice(existingProductIndex, 1);
+      if (id) {
+        const productIndex = products.findIndex(prod => prod.id === id);
+        const updatedProducts = products.filter(prod => prod.id !== id);
         fs.writeFile(pathDir, JSON.stringify(updatedProducts), err => {
           console.log(err);
         });
