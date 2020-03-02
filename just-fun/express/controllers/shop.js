@@ -41,10 +41,20 @@ exports.getIndex = (request, response, next) => {
 };
 
 exports.getCart = (request, response, next) => {
-  response.render("shop/cart", {
-    path: "/cart",
-    pageTitle: "Your Cart"
-  });
+  Cart.getCart(cart => {
+    Product.fetchAll(products => {
+      const cartProducts = [];
+      for (product of products) {
+        if (cart.products.find(prod => prod.id === product.id)) {
+          cartProducts.push(product);
+        }
+      }
+      response.render("shop/cart", {
+        path: "/cart",
+        pageTitle: "Your Cart"
+      });
+    })
+  })
 };
 
 exports.postCart = (request, response, next) => {
