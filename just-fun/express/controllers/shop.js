@@ -45,13 +45,15 @@ exports.getCart = (request, response, next) => {
     Product.fetchAll(products => {
       const cartProducts = [];
       for (product of products) {
-        if (cart.products.find(prod => prod.id === product.id)) {
-          cartProducts.push(product);
+        const cartProductData = cart.products.find(prod => prod.id === product.id);
+        if (cartProductData) {
+          cartProducts.push({productData: product, qty: cartProductData.qty});
         }
       }
       response.render("shop/cart", {
         path: "/cart",
-        pageTitle: "Your Cart"
+        pageTitle: "Your Cart",
+        products: cartProducts
       });
     })
   })
