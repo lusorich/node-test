@@ -19,5 +19,4 @@ app.use(express.static(path.join(rootDir, "public")));
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(page404);
-
 app.listen(3030);
